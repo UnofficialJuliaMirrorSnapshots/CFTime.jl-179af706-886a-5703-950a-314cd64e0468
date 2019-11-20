@@ -584,6 +584,9 @@ function timetype(calendar = "standard")
     return DT
 end
 
+timetype(dt::Type{<:AbstractCFDateTime}) = dt
+timetype(dt::Type{DateTime}) = dt
+
 """
     t0,plength = timeunits(units,calendar = "standard")
 
@@ -676,7 +679,7 @@ the specified units (e.g. `"days since 2000-01-01 00:00:00"`) using the calendar
 `"all_leap"`, `"366_day"`, `"360_day"`.
 """
 function timeencode(data::AbstractArray{DT,N},units,
-                    calendar = "standard") where N where DT <: Union{DateTime,AbstractCFDateTime,Union{DateTime,Missing}}
+                    calendar = "standard") where N where DT <: Union{DateTime,AbstractCFDateTime,Union{DateTime,AbstractCFDateTime,Missing}}
 
     DT2 = timetype(calendar)
     t0,plength = timeunits(DT2,units)
@@ -690,7 +693,7 @@ function timeencode(data::AbstractArray{DT,N},units,
             try
                 convert.(DT2,dt)
             catch
-                error("It is not possible to convert between $(DT) and $(DT2)")
+                error("It is not possible to convert from $(DT) to $(DT2)")
             end
 
         return Dates.value(tmp - t0) / plength
